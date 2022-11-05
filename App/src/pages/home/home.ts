@@ -11,28 +11,33 @@ import { InputDialogServiceProvider } from '../../providers/input-dialog-service
 })
 export class HomePage {
   title = "Grocery";
+  items = [];
+  errorMessage: string;
 
   constructor(public navCtrl: NavController, public toastCtrl: ToastController,
     public dataService: GroceriesServiceProvider, public inputDialogService: InputDialogServiceProvider, 
     public socialSharing: SocialSharing) {
+      dataService.dataChanged$.subscribe((dataChanged: boolean) => {
+        this.loadItems();
+      })
+  }
 
+  ionViewDidLoad(){
+    this.loadItems();
   }
 
   loadItems() {
-    return this.dataService.getItems();
+    return this.dataService.getItems().subscribe(
+      items => this.items = items,
+      error => this.errorMessage = <any>error
+    );
   }
 
-  removeItem(item, index) {
-    const toast = this.toastCtrl.create({
-      message: 'Removing ' + item.name + " from list...",
-      duration: 3000
-    });
-    toast.present();
-    
-    this.dataService.removeItem(index);  
+  removeItem(item) {
+    this.dataService.removeItem(item._id);  
   }
 
-  shareItem(item, index) {
+  shareItem(item) {
     const toast = this.toastCtrl.create({
       message: `Sharing ${item.name}`,
       duration: 3000
