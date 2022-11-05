@@ -11,7 +11,7 @@ export class InputDialogServiceProvider {
   showPrompt(item?, index?) {
     let itemId = ''
     if(item){
-      const itemId = item._id;
+      itemId = item._id;
     }
     
     const prompt = this.alertCtrl.create({
